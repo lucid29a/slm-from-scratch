@@ -13,6 +13,7 @@ effect (logging, checkpointing, eval, sampling) to
 
 from __future__ import annotations
 
+import threading
 from dataclasses import dataclass
 
 import torch
@@ -80,6 +81,12 @@ class Trainer:
             :class:`~slm_from_scratch.training.distributed.SingleDeviceStrategy`.
         checkpoint_manager: If given and a checkpoint already exists in its
             directory, training resumes from the latest one automatically.
+        stop_event: If given, checked once per step; when set, :meth:`train`
+            returns after the in-flight step completes instead of running to
+            ``max_steps``. Lets a caller (e.g. the GUI's "Stop" button) abort a
+            run cleanly from another thread without corrupting trainer state --
+            a subsequent :meth:`train` call (or a checkpoint resume) can still
+            continue from exactly where it left off.
     """
 
     def __init__(
@@ -93,9 +100,11 @@ class Trainer:
         callbacks: list[Callback] | None = None,
         distributed: DistributedStrategy | None = None,
         checkpoint_manager: CheckpointManager | None = None,
+        stop_event: threading.Event | None = None,
     ) -> None:
         self.config = config
         self.distributed = distributed or SingleDeviceStrategy()
+        self.stop_event = stop_event
         self.device = torch.device(
             config.device if torch.cuda.is_available() or config.device == "cpu" else "cpu"
         )
@@ -135,6 +144,9 @@ class Trainer:
         )
 
         while self.current_step < self.config.max_steps:
+            if self.stop_event is not None and self.stop_event.is_set():
+                break
+
             lr = self.lr_schedule.lr_at(self.current_step)
             for group in self.optimizer.param_groups:
                 group["lr"] = lr

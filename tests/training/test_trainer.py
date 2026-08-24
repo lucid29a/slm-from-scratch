@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import threading
 from pathlib import Path
 
 import torch
@@ -130,3 +131,37 @@ def test_infer_block_size_matches_dataset() -> None:
     dataset = SyntheticLMDataset(200, block_size=16, vocab_size=50)
     trainer, _ = build_trainer(dataset, max_steps=1)
     assert trainer._infer_block_size() == 16
+
+
+def test_stop_event_halts_before_max_steps() -> None:
+    dataset = SyntheticLMDataset(200, block_size=16, vocab_size=50)
+    model = make_tiny_model()
+    stop_event = threading.Event()
+
+    class StopAfterThree(Callback):
+        def on_step_end(self, trainer: Trainer, metrics: StepMetrics) -> None:
+            if metrics.step == 2:
+                stop_event.set()
+
+    config = TrainerConfig(max_steps=100, micro_batch_size=4, device="cpu", precision="fp32")
+    schedule = CosineWithWarmup(LRScheduleConfig(max_lr=1e-3, total_steps=100))
+    trainer = Trainer(
+        model=model,
+        train_dataset=dataset,
+        config=config,
+        optimizer_config=OptimizerConfig(),
+        lr_schedule=schedule,
+        callbacks=[StopAfterThree()],
+        stop_event=stop_event,
+    )
+    trainer.train()
+    assert trainer.current_step == 3
+    assert trainer.current_step < config.max_steps
+
+
+def test_no_stop_event_runs_to_completion() -> None:
+    dataset = SyntheticLMDataset(200, block_size=16, vocab_size=50)
+    trainer, _ = build_trainer(dataset, max_steps=5)
+    assert trainer.stop_event is None
+    trainer.train()
+    assert trainer.current_step == 5

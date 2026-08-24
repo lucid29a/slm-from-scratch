@@ -32,6 +32,7 @@ dependencies = [
 [project.optional-dependencies]
 data = ["datasets>=3.0", "tokenizers>=0.20", "pyarrow>=16.0"]
 logging = ["tensorboard>=2.17", "wandb>=0.17"]
+gui = ["gradio>=5.0"]
 dev = [
     "ruff>=0.6",
     "mypy>=1.11",
@@ -43,7 +44,7 @@ dev = [
     "types-regex",
 ]
 notebooks = ["jupyter>=1.1", "matplotlib>=3.9"]
-all = ["slm-from-scratch[data,logging,dev,notebooks]"]
+all = ["slm-from-scratch[data,logging,gui,dev,notebooks]"]
 
 [project.urls]
 Homepage = "https://github.com/OWNER/slm-from-scratch"
