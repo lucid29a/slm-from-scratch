@@ -1,0 +1,57 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+.eggs/
+.venv/
+venv/
+env/
+
+# --- Tooling caches ---
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+.ipynb_checkpoints/
+
+# --- Project artefacts (large, regenerable) ---
+data/
+checkpoints/
+runs/
+outputs/
+results/
+wandb/
+*.bin
+*.safetensors
+*.pt
+*.ckpt
+*.npy
+*.arrow
+
+# Tokenizer artefacts are small and reproducible; keep the trained ones we ship.
+!artifacts/tokenizers/**
+
+# --- LaTeX ---
+paper/*.aux
+paper/*.bbl
+paper/*.blg
+paper/*.log
+paper/*.out
+paper/*.synctex.gz
+paper/*.fdb_latexmk
+paper/*.fls
+paper/*.toc
+
+# --- OS / editors ---
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp

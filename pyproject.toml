@@ -1,0 +1,141 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "slm-from-scratch"
+version = "0.1.0.dev0"
+description = "Build a Small Language Model from zero: a rigorously object-oriented codebase that doubles as a curriculum."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "slm-from-scratch contributors" }]
+keywords = ["slm", "language-model", "transformer", "from-scratch", "education", "pytorch"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+dependencies = [
+    "torch>=2.4",
+    "numpy>=1.26",
+    "pyyaml>=6.0",
+    "regex>=2024.5.15",
+    "tqdm>=4.66",
+    "rich>=13.7",
+]
+
+[project.optional-dependencies]
+data = ["datasets>=3.0", "tokenizers>=0.20", "pyarrow>=16.0"]
+logging = ["tensorboard>=2.17", "wandb>=0.17"]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.3",
+    "pytest-cov>=5.0",
+    "pre-commit>=3.8",
+    "types-PyYAML",
+    "types-tqdm",
+]
+notebooks = ["jupyter>=1.1", "matplotlib>=3.9"]
+all = ["slm-from-scratch[data,logging,dev,notebooks]"]
+
+[project.urls]
+Homepage = "https://github.com/OWNER/slm-from-scratch"
+Documentation = "https://github.com/OWNER/slm-from-scratch/tree/main/docs"
+Repository = "https://github.com/OWNER/slm-from-scratch"
+Issues = "https://github.com/OWNER/slm-from-scratch/issues"
+
+[project.scripts]
+slm = "slm_from_scratch.cli.main:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+slm_from_scratch = ["py.typed"]
+
+# --------------------------------------------------------------------------- #
+# Ruff
+# --------------------------------------------------------------------------- #
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",    # pycodestyle
+    "F",         # pyflakes
+    "I",         # isort
+    "N",         # pep8-naming
+    "UP",        # pyupgrade
+    "B",         # bugbear
+    "C4",        # comprehensions
+    "SIM",       # simplify
+    "RET",       # return
+    "ARG",       # unused arguments
+    "PTH",       # use pathlib
+    "RUF",       # ruff-specific
+    "D",         # pydocstyle
+    "ANN",       # annotations
+]
+ignore = [
+    "D105",   # magic methods are self-explanatory
+    "D107",   # __init__ docstring lives on the class
+    "D203",   # incompatible with D211
+    "D213",   # incompatible with D212
+    "ANN401", # Any is occasionally the honest type
+    "N812",   # lowercase imported as non-lowercase (torch.nn.functional as F)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["D", "ANN", "ARG"]
+"scripts/**" = ["D", "ANN"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+# --------------------------------------------------------------------------- #
+# Mypy
+# --------------------------------------------------------------------------- #
+[tool.mypy]
+# Left unset so mypy uses the interpreter it's actually run with; numpy's bundled
+# stubs use PEP 695 syntax that requires the checker itself to run on 3.12+, even
+# though the project's own minimum runtime is 3.11 (see requires-python above).
+strict = true
+files = ["src", "tests"]
+plugins = []
+warn_unreachable = true
+disallow_untyped_decorators = false
+show_error_codes = true
+
+[[tool.mypy.overrides]]
+module = ["tests.*", "datasets.*", "tokenizers.*", "wandb.*", "tensorboard.*", "torch.utils.tensorboard.*"]
+ignore_missing_imports = true
+disallow_untyped_defs = false
+
+# --------------------------------------------------------------------------- #
+# Pytest
+# --------------------------------------------------------------------------- #
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+addopts = "-ra --strict-markers --strict-config"
+markers = [
+    "slow: takes more than a few seconds",
+    "gpu: requires a CUDA device",
+    "network: downloads data from the internet",
+]
+filterwarnings = ["error::DeprecationWarning:slm_from_scratch.*"]
+
+[tool.coverage.run]
+source = ["src/slm_from_scratch"]
+branch = true
+
+[tool.coverage.report]
+exclude_lines = ["pragma: no cover", "raise NotImplementedError", "if TYPE_CHECKING:", "@overload"]
