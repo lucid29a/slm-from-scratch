@@ -22,7 +22,9 @@ coverage.xml
 .ipynb_checkpoints/
 
 # --- Project artefacts (large, regenerable) ---
-data/
+# Anchored to the repo root: an unanchored `data/` would also match
+# src/slm_from_scratch/data/, our actual source subpackage.
+/data/
 checkpoints/
 runs/
 outputs/
