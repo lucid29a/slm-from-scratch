@@ -40,6 +40,7 @@ dev = [
     "pre-commit>=3.8",
     "types-PyYAML",
     "types-tqdm",
+    "types-regex",
 ]
 notebooks = ["jupyter>=1.1", "matplotlib>=3.9"]
 all = ["slm-from-scratch[data,logging,dev,notebooks]"]
@@ -118,6 +119,7 @@ show_error_codes = true
 module = ["tests.*", "datasets.*", "tokenizers.*", "wandb.*", "tensorboard.*", "torch.utils.tensorboard.*"]
 ignore_missing_imports = true
 disallow_untyped_defs = false
+disallow_incomplete_defs = false
 
 # --------------------------------------------------------------------------- #
 # Pytest
