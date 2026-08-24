@@ -1,0 +1,50 @@
+# Ablation ladder, rung S0: the original 2017 Transformer, as literally as this
+# codebase can express it -- post-norm, learned absolute position embeddings,
+# GELU feedforward, plain multi-head attention (explicit, unfused), LayerNorm,
+# untied embeddings. Every later rung changes exactly one thing from here.
+
+model:
+  vocab_size: 4096
+  n_layer: 16
+  n_head: 8
+  n_embd: 512
+  block_size: 256
+  dropout: 0.0
+  bias: true
+  attention: vanilla_mha
+  positional_encoding: learned
+  normalization: layernorm
+  norm_placement: post
+  feedforward: gelu
+  weight_tying: false
+
+trainer:
+  max_steps: 6000
+  micro_batch_size: 32
+  grad_accum_steps: 1
+  grad_clip: 1.0
+  precision: bf16
+  seed: 1337
+  device: cuda
+
+optimizer:
+  learning_rate: 3.0e-4
+  weight_decay: 0.1
+
+lr_schedule:
+  type: cosine
+  max_lr: 3.0e-4
+  min_lr: 3.0e-5
+  warmup_steps: 200
+  total_steps: 6000
+
+data:
+  shard_dir: artifacts/cli_smoke/shards
+
+checkpoint_dir: artifacts/ablation/checkpoints/s0
+log_every: 200
+checkpoint_every: 6000
+
+tokenizer: artifacts/cli_smoke/tokenizer.json
+sample_every: 2000
+sample_prompt: "Once upon a time"

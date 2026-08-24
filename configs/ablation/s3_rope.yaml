@@ -1,0 +1,42 @@
+# Ablation ladder, rung S3: everything from s2_rmsnorm, plus RoPE.
+# Every field below is identical to s2_rmsnorm.yaml except the one(s) called out above.
+
+checkpoint_dir: artifacts/ablation/checkpoints/s3
+checkpoint_every: 6000
+data:
+  shard_dir: artifacts/cli_smoke/shards
+log_every: 200
+lr_schedule:
+  max_lr: 0.0003
+  min_lr: 3.0e-05
+  total_steps: 6000
+  type: cosine
+  warmup_steps: 200
+model:
+  attention: vanilla_mha
+  bias: true
+  block_size: 256
+  dropout: 0.0
+  feedforward: gelu
+  n_embd: 512
+  n_head: 8
+  n_layer: 16
+  norm_placement: pre
+  normalization: rmsnorm
+  positional_encoding: rotary
+  vocab_size: 4096
+  weight_tying: false
+optimizer:
+  learning_rate: 0.0003
+  weight_decay: 0.1
+sample_every: 2000
+sample_prompt: Once upon a time
+tokenizer: artifacts/cli_smoke/tokenizer.json
+trainer:
+  device: cuda
+  grad_accum_steps: 1
+  grad_clip: 1.0
+  max_steps: 6000
+  micro_batch_size: 32
+  precision: bf16
+  seed: 1337
