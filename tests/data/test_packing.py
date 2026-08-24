@@ -17,7 +17,12 @@ def test_packer_inserts_eos_between_documents(tokenizer: ByteLevelBPETokenizer) 
     docs = ["hello", "world"]
     stream = list(packer.pack(docs))
 
-    expected = [*tokenizer.encode("hello"), tokenizer.eos_id, *tokenizer.encode("world"), tokenizer.eos_id]
+    expected = [
+        *tokenizer.encode("hello"),
+        tokenizer.eos_id,
+        *tokenizer.encode("world"),
+        tokenizer.eos_id,
+    ]
     assert stream == expected
 
 

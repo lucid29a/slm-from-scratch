@@ -22,9 +22,9 @@ from slm_from_scratch.core.config import BaseConfig
 from slm_from_scratch.core.registry import Registry
 
 __all__ = [
+    "PROCESSING_STEPS",
     "MinHashDeduplicator",
     "MinHashDeduplicatorConfig",
-    "PROCESSING_STEPS",
     "ProcessingPipeline",
     "ProcessingStep",
     "ProcessingStepConfig",
