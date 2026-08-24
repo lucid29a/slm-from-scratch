@@ -25,6 +25,7 @@ coverage.xml
 # Anchored to the repo root: an unanchored `data/` would also match
 # src/slm_from_scratch/data/, our actual source subpackage.
 /data/
+/artifacts/
 checkpoints/
 runs/
 outputs/
