@@ -1,0 +1,48 @@
+# The exact configuration validated by the Phase 5 gate (scripts/run_tinystories_smoke.py),
+# now runnable as `slm train --config configs/train/smoke.yaml`.
+
+model:
+  vocab_size: 4096
+  n_layer: 6
+  n_head: 8
+  n_embd: 256
+  block_size: 256
+  dropout: 0.0
+  attention: causal_self_attention
+  positional_encoding: rotary
+  normalization: rmsnorm
+  norm_placement: pre
+  feedforward: swiglu
+  weight_tying: true
+  bias: false
+
+trainer:
+  max_steps: 1500
+  micro_batch_size: 32
+  grad_accum_steps: 1
+  grad_clip: 1.0
+  precision: bf16
+  seed: 1337
+  device: cuda
+
+optimizer:
+  learning_rate: 3.0e-4
+  weight_decay: 0.1
+
+lr_schedule:
+  type: cosine
+  max_lr: 3.0e-4
+  min_lr: 3.0e-5
+  warmup_steps: 100
+  total_steps: 1500
+
+data:
+  shard_dir: artifacts/cli_smoke/shards
+
+checkpoint_dir: artifacts/cli_smoke/checkpoints
+log_every: 100
+checkpoint_every: 500
+
+tokenizer: artifacts/cli_smoke/tokenizer.json
+sample_every: 500
+sample_prompt: "Once upon a time"

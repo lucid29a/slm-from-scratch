@@ -12,6 +12,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from dataclasses import dataclass
+from typing import ClassVar
 
 from slm_from_scratch.core.component import Component
 from slm_from_scratch.core.config import BaseConfig
@@ -41,6 +42,11 @@ class TextSourceConfig(BaseConfig):
 
 class TextSource(Component[TextSourceConfig], ABC):
     """Abstract base for anything that yields raw text documents."""
+
+    #: The concrete TextSourceConfig subclass this source is built from -- lets
+    #: generic code (e.g. the CLI) construct the right config type from a plain
+    #: YAML mapping without a chain of isinstance checks.
+    config_cls: ClassVar[type[TextSourceConfig]] = TextSourceConfig
 
     @abstractmethod
     def _iter_documents(self) -> Iterator[str]:

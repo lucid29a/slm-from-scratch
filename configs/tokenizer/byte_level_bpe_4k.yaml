@@ -1,0 +1,3 @@
+tokenizer:
+  type: byte_level_bpe
+  vocab_size: 4096

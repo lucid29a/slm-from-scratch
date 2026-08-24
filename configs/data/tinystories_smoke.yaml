@@ -1,0 +1,9 @@
+source:
+  type: tinystories
+  limit: 20000
+
+processing:
+  - type: unicode_normalize
+  - type: quality_filter
+    min_chars: 16
+  - type: minhash_dedup

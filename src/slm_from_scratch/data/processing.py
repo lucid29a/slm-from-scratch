@@ -15,7 +15,7 @@ from abc import ABC, abstractmethod
 from collections import Counter
 from collections.abc import Iterable, Iterator
 from dataclasses import dataclass
-from typing import Literal, get_args
+from typing import ClassVar, Literal, get_args
 
 from slm_from_scratch.core.component import Component
 from slm_from_scratch.core.config import BaseConfig
@@ -42,6 +42,10 @@ class ProcessingStepConfig(BaseConfig):
 
 class ProcessingStep(Component[ProcessingStepConfig], ABC):
     """One document-cleaning stage: transform, or drop, a single document."""
+
+    #: The concrete ProcessingStepConfig subclass this step is built from -- see
+    #: TextSource.config_cls for why this exists.
+    config_cls: ClassVar[type[ProcessingStepConfig]] = ProcessingStepConfig
 
     @abstractmethod
     def process(self, text: str) -> str | None:
@@ -87,6 +91,8 @@ class UnicodeNormalizerConfig(ProcessingStepConfig):
 @PROCESSING_STEPS.register("unicode_normalize")
 class UnicodeNormalizer(ProcessingStep):
     """Normalizes Unicode representation and strips stray control characters."""
+
+    config_cls: ClassVar[type[ProcessingStepConfig]] = UnicodeNormalizerConfig
 
     def process(self, text: str) -> str | None:
         """Apply the configured normalization form and control-char stripping."""
@@ -145,6 +151,8 @@ class QualityFilterConfig(ProcessingStepConfig):
 @PROCESSING_STEPS.register("quality_filter")
 class QualityFilter(ProcessingStep):
     """Drops documents that are too short, too long, too symbol-heavy, or too repetitive."""
+
+    config_cls: ClassVar[type[ProcessingStepConfig]] = QualityFilterConfig
 
     def process(self, text: str) -> str | None:
         """Return ``text`` unchanged, or ``None`` if any quality check fails."""
@@ -215,6 +223,8 @@ class MinHashDeduplicator(ProcessingStep):
     approximate matches; that refinement is a natural extension of this class,
     not a change to the pipeline around it.
     """
+
+    config_cls: ClassVar[type[ProcessingStepConfig]] = MinHashDeduplicatorConfig
 
     def __init__(self, config: ProcessingStepConfig) -> None:
         super().__init__(config)

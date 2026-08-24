@@ -1,0 +1,16 @@
+# The model architecture section alone, for `slm generate --model-config`
+# (matches configs/train/smoke.yaml's `model:` section).
+model:
+  vocab_size: 4096
+  n_layer: 6
+  n_head: 8
+  n_embd: 256
+  block_size: 256
+  dropout: 0.0
+  attention: causal_self_attention
+  positional_encoding: rotary
+  normalization: rmsnorm
+  norm_placement: pre
+  feedforward: swiglu
+  weight_tying: true
+  bias: false

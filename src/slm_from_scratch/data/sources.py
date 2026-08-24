@@ -13,6 +13,7 @@ from __future__ import annotations
 from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import ClassVar
 
 from slm_from_scratch.core.exceptions import DataError
 from slm_from_scratch.data.base import SOURCES, TextSource, TextSourceConfig
@@ -50,6 +51,8 @@ class LocalFileSourceConfig(TextSourceConfig):
 @SOURCES.register("local_file")
 class LocalFileSource(TextSource):
     """Reads documents from local ``.txt`` (or similarly plain-text) files."""
+
+    config_cls: ClassVar[type[TextSourceConfig]] = LocalFileSourceConfig
 
     def _iter_documents(self) -> Iterator[str]:
         config = self.config
@@ -95,6 +98,8 @@ class HFDatasetSource(TextSource):
     Requires the optional ``data`` extra (``pip install -e ".[data]"``).
     """
 
+    config_cls: ClassVar[type[TextSourceConfig]] = HFDatasetSourceConfig
+
     def _iter_documents(self) -> Iterator[str]:
         config = self.config
         assert isinstance(config, HFDatasetSourceConfig)
@@ -130,6 +135,8 @@ class TinyStoriesSourceConfig(HFDatasetSourceConfig):
 class TinyStoriesSource(HFDatasetSource):
     """The TinyStories corpus: short, simple English stories for small models."""
 
+    config_cls: ClassVar[type[TextSourceConfig]] = TinyStoriesSourceConfig
+
 
 @dataclass(frozen=True, kw_only=True)
 class FineWebEduSourceConfig(HFDatasetSourceConfig):
@@ -143,3 +150,5 @@ class FineWebEduSourceConfig(HFDatasetSourceConfig):
 @SOURCES.register("fineweb_edu")
 class FineWebEduSource(HFDatasetSource):
     """A quality-filtered educational-web-text sample, used for the 150M run."""
+
+    config_cls: ClassVar[type[TextSourceConfig]] = FineWebEduSourceConfig
