@@ -1,0 +1,28 @@
+model:
+  attention: vanilla_mha
+  bias: true
+  block_size: 256
+  dropout: 0.0
+  feedforward: swiglu
+  n_embd: 512
+  n_head: 8
+  n_layer: 16
+  norm_placement: pre
+  normalization: rmsnorm
+  positional_encoding: rotary
+  vocab_size: 4096
+  weight_tying: false
+checkpoint: artifacts/ablation/checkpoints/s4
+tokenizer: artifacts/cli_smoke/tokenizer.json
+held_out:
+  shard_dir: artifacts/heldout/shards
+  batch_size: 32
+  max_batches: 30
+  metrics:
+  - perplexity
+  - bits_per_byte
+  - token_accuracy
+results_json: artifacts/eval/s4.json
+results_latex: paper/tables/s4.tex
+table_caption: s4 held-out evaluation
+table_label: tab:s4-eval

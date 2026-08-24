@@ -1,0 +1,28 @@
+model:
+  vocab_size: 4096
+  n_layer: 16
+  n_head: 8
+  n_embd: 512
+  block_size: 256
+  dropout: 0.0
+  bias: true
+  attention: vanilla_mha
+  positional_encoding: learned
+  normalization: layernorm
+  norm_placement: post
+  feedforward: gelu
+  weight_tying: false
+checkpoint: artifacts/ablation/checkpoints/s0
+tokenizer: artifacts/cli_smoke/tokenizer.json
+held_out:
+  shard_dir: artifacts/heldout/shards
+  batch_size: 32
+  max_batches: 30
+  metrics:
+  - perplexity
+  - bits_per_byte
+  - token_accuracy
+results_json: artifacts/eval/s0.json
+results_latex: paper/tables/s0.tex
+table_caption: s0 held-out evaluation
+table_label: tab:s0-eval

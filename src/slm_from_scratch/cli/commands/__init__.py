@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from slm_from_scratch.cli.commands.ablate import AblateCommand
+from slm_from_scratch.cli.commands.eval import EvalCommand
 from slm_from_scratch.cli.commands.generate import GenerateCommand
 from slm_from_scratch.cli.commands.gui import GuiCommand
 from slm_from_scratch.cli.commands.pack import PackCommand
@@ -12,6 +13,7 @@ from slm_from_scratch.cli.commands.train_tokenizer import TrainTokenizerCommand
 
 __all__ = [
     "AblateCommand",
+    "EvalCommand",
     "GenerateCommand",
     "GuiCommand",
     "PackCommand",

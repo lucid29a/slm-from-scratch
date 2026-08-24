@@ -1,0 +1,29 @@
+model:
+  attention: grouped_query_attention
+  bias: true
+  block_size: 256
+  dropout: 0.0
+  feedforward: swiglu
+  n_embd: 512
+  n_head: 8
+  n_kv_head: 4
+  n_layer: 16
+  norm_placement: pre
+  normalization: rmsnorm
+  positional_encoding: rotary
+  vocab_size: 4096
+  weight_tying: true
+checkpoint: artifacts/ablation/checkpoints/s6
+tokenizer: artifacts/cli_smoke/tokenizer.json
+held_out:
+  shard_dir: artifacts/heldout/shards
+  batch_size: 32
+  max_batches: 30
+  metrics:
+  - perplexity
+  - bits_per_byte
+  - token_accuracy
+results_json: artifacts/eval/s6.json
+results_latex: paper/tables/s6.tex
+table_caption: s6 held-out evaluation
+table_label: tab:s6-eval

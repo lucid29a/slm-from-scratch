@@ -1,0 +1,13 @@
+# A held-out slice of TinyStories, disjoint from the 20,000 documents used to
+# train the ablation ladder (configs/data/tinystories_smoke.yaml used limit:
+# 20000, i.e. the first 20k streamed documents) -- this uses the *next* 5,000.
+source:
+  type: hf_dataset
+  dataset_name: roneneldan/TinyStories
+  split: "train[20000:25000]"
+  streaming: false
+
+processing:
+  - type: unicode_normalize
+  - type: quality_filter
+    min_chars: 16
