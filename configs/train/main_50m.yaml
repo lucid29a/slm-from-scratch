@@ -1,0 +1,63 @@
+# The main run: ~46.1M non-embedding params (54.5M total), full modern stack
+# (RoPE + RMSNorm + SwiGLU + GQA + weight tying), trained on FineWeb-Edu.
+#
+# max_steps / lr_schedule.total_steps below are PLACEHOLDERS sized for exactly
+# 1B tokens at the tokens-per-step implied by trainer.micro_batch_size *
+# trainer.grad_accum_steps * model.block_size (16*4*1024 = 65,536 -> ~15,259
+# steps). The Colab notebook recomputes and overwrites both after `slm pack`
+# reports the corpus's actual token count (see docs/colab_main_run.md), so the
+# real run always matches ~20 tokens/param (Chinchilla-optimal) regardless of
+# exactly how many tokens FineWeb-Edu yielded.
+#
+# micro_batch_size=16 is sized conservatively for a 16GB GPU (e.g. Colab's
+# free-tier T4); raise it (and drop grad_accum_steps to match) on a bigger GPU
+# for higher throughput at the same effective batch size -- see
+# docs/throughput_measurements.md for why raising micro_batch_size blindly on
+# a VRAM-constrained card backfires instead.
+
+model:
+  vocab_size: 16384
+  n_layer: 16
+  n_head: 8
+  n_embd: 512
+  block_size: 1024
+  n_kv_head: 4
+  dropout: 0.0
+  attention: grouped_query_attention
+  positional_encoding: rotary
+  normalization: rmsnorm
+  norm_placement: pre
+  feedforward: swiglu
+  weight_tying: true
+  bias: false
+
+trainer:
+  max_steps: 15259
+  micro_batch_size: 16
+  grad_accum_steps: 4
+  grad_clip: 1.0
+  precision: bf16
+  seed: 1337
+  device: cuda
+
+optimizer:
+  learning_rate: 3.0e-4
+  weight_decay: 0.1
+
+lr_schedule:
+  type: cosine
+  max_lr: 3.0e-4
+  min_lr: 3.0e-5
+  warmup_steps: 300
+  total_steps: 15259
+
+data:
+  shard_dir: artifacts/shards
+
+checkpoint_dir: /content/drive/MyDrive/slm-from-scratch/checkpoints/main_50m
+log_every: 50
+checkpoint_every: 1000
+
+tokenizer: artifacts/tokenizer.json
+sample_every: 1000
+sample_prompt: "The history of"

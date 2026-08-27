@@ -1,0 +1,13 @@
+# Source corpus for the main ~50M-param run. FineWeb-Edu instead of TinyStories
+# specifically to avoid the epoch-overfitting failure mode documented in
+# docs/phase6_ablation_results.md: this needs to stay compute-bound, not
+# epoch-bound, so the document count here is sized generously above the ~1B
+# packed tokens the model actually trains on (see configs/train/main_50m.yaml).
+source:
+  type: fineweb_edu
+  limit: 1200000
+
+processing:
+  - type: unicode_normalize
+  - type: quality_filter
+    min_chars: 200

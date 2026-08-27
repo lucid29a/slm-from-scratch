@@ -1,0 +1,6 @@
+# A larger vocabulary than configs/tokenizer/byte_level_bpe_4k.yaml (which was
+# sized for TinyStories' narrow, simple vocabulary): general web text needs more
+# merges to reach a reasonable bytes-per-token ratio.
+tokenizer:
+  type: byte_level_bpe
+  vocab_size: 16384
